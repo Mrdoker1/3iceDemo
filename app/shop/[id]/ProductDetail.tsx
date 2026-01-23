@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Button, Badge, NumberInput } from '@mantine/core';
 import { motion } from 'framer-motion';
 import { ShoppingCart, ArrowLeft, Star, Truck, Shield, RefreshCw } from 'lucide-react';
+import { getAssetPath } from '@/lib/utils';
 
 interface Product {
   id: string;

@@ -5,6 +5,7 @@ import { Play, ChevronRight, Send, Users, TrendingUp, ShoppingBag, Flame, Clock,
 import Link from 'next/link';
 import Image from 'next/image';
 import VideoPlayer from '@/components/VideoPlayer';
+import { getAssetPath } from '@/lib/utils';
 
 interface Game {
   id: string;
@@ -217,7 +218,7 @@ export default function WatchPage() {
                         <div className="group bg-gradient-to-br from-white/5 to-transparent border-2 border-white/20 hover:border-[#4A9FD8] rounded-xl p-6 transition-all">
                           <div className="relative h-40 mb-4 rounded-lg overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
                             <Image
-                              src="/jersey-minnesota.png"
+                              src={getAssetPath("/jersey-minnesota.png")}
                               alt="Minnesota Jersey"
                               fill
                               className="object-contain p-2"
@@ -279,7 +280,7 @@ export default function WatchPage() {
                         <div className="group bg-gradient-to-br from-white/5 to-transparent border-2 border-white/20 hover:border-[#4A9FD8] rounded-xl p-6 transition-all">
                           <div className="relative h-40 mb-4 rounded-lg overflow-hidden bg-gradient-to-br from-blue-900 to-blue-950">
                             <Image
-                              src="/jersey-buffalo.png"
+                              src={getAssetPath("/jersey-buffalo.png")}
                               alt="Buffalo Jersey"
                               fill
                               className="object-contain p-2"
@@ -661,7 +662,7 @@ export default function WatchPage() {
                 <div className="text-center flex-1">
                   <div className="w-20 h-20 mx-auto mb-3 relative">
                     <Image
-                      src="/Minnesota.png"
+                      src={getAssetPath("/Minnesota.png")}
                       alt="Minnesota"
                       width={80}
                       height={80}
@@ -675,7 +676,7 @@ export default function WatchPage() {
                 <div className="text-center flex-1">
                   <div className="w-20 h-20 mx-auto mb-3 relative">
                     <Image
-                      src="/Buffalo.png"
+                      src={getAssetPath("/Buffalo.png")}
                       alt="Buffalo"
                       width={80}
                       height={80}
@@ -807,7 +808,7 @@ export default function WatchPage() {
                   <div className="flex gap-3">
                     <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gradient-to-br from-gray-700 to-gray-800 flex-shrink-0">
                       <Image
-                        src="/jersey-minnesota.png"
+                        src={getAssetPath("/jersey-minnesota.png")}
                         alt="Minnesota Hoodie"
                         fill
                         className="object-contain p-1"
@@ -851,7 +852,7 @@ export default function WatchPage() {
                   <div className="flex gap-3">
                     <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gradient-to-br from-gray-700 to-gray-800 flex-shrink-0">
                       <Image
-                        src="/jersey-minnesota.png"
+                        src={getAssetPath("/jersey-minnesota.png")}
                         alt="Pro Jersey"
                         fill
                         className="object-contain p-1"

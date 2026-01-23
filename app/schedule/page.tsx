@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { Button, Badge } from '@mantine/core';
 import { motion } from 'framer-motion';
+import { getAssetPath } from '@/lib/utils';
 
 interface ScheduleEvent {
   id: string;
@@ -289,7 +290,7 @@ export default function SchedulePage() {
                     transition={{ type: "spring", stiffness: 300 }}
                   >
                     <Image
-                      src="/Minnesota.png"
+                      src={getAssetPath("/Minnesota.png")}
                       alt="Minnesota"
                       width={120}
                       height={120}
@@ -367,7 +368,7 @@ export default function SchedulePage() {
                     transition={{ type: "spring", stiffness: 300 }}
                   >
                     <Image
-                      src="/Buffalo.png"
+                      src={getAssetPath("/Buffalo.png")}
                       alt="Buffalo"
                       width={120}
                       height={120}
@@ -507,14 +508,14 @@ export default function SchedulePage() {
                   
                   <div className="flex items-center gap-2 mb-1.5">
                     <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
-                      <Image src="/Minnesota.png" alt="MIN" width={20} height={20} unoptimized />
+                      <Image src={getAssetPath("/Minnesota.png")} alt="MIN" width={20} height={20} unoptimized />
                     </div>
                     <span className="text-xs font-bold text-white">MINNESOTA</span>
                   </div>
                   
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
-                      <Image src="/Buffalo.png" alt="BUF" width={20} height={20} unoptimized />
+                      <Image src={getAssetPath("/Buffalo.png")} alt="BUF" width={20} height={20} unoptimized />
                     </div>
                     <span className="text-xs font-bold text-white">BUFFALO</span>
                   </div>

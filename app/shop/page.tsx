@@ -7,6 +7,7 @@ import { ShoppingBag, Filter, X, ChevronDown } from 'lucide-react';
 import Image from 'next/image';
 import { Accordion, Checkbox } from '@mantine/core';
 import { motion } from 'framer-motion';
+import { getAssetPath } from '@/lib/utils';
 
 interface Product {
   id: string;
@@ -42,11 +43,11 @@ const categories = [
 const getJerseyImage = (team: string, isAway: boolean = false) => {
   const teamName = team.split(' ').pop()?.toLowerCase();
   if (teamName === 'minnesota') {
-    return '/jersey-minnesota.png';
+    return getAssetPath('/jersey-minnesota.png');
   } else if (teamName === 'buffalo') {
-    return '/jersey-buffalo.png';
+    return getAssetPath('/jersey-buffalo.png');
   }
-  return '/jersey-minnesota.png'; // fallback
+  return getAssetPath('/jersey-minnesota.png'); // fallback
 };
 
 const products: Product[] = [
@@ -56,7 +57,7 @@ const products: Product[] = [
     price: 129.99,
     team: '3ICE Minnesota',
     category: 'jersey',
-    image: '/jersey-minnesota.png',
+    image: getAssetPath('/jersey-minnesota.png'),
   },
   {
     id: '2',
@@ -64,7 +65,7 @@ const products: Product[] = [
     price: 129.99,
     team: '3ICE Minnesota',
     category: 'jersey',
-    image: '/jersey-minnesota.png',
+    image: getAssetPath('/jersey-minnesota.png'),
   },
   {
     id: '3',
@@ -88,7 +89,7 @@ const products: Product[] = [
     price: 129.99,
     team: '3ICE Buffalo',
     category: 'jersey',
-    image: '/jersey-buffalo.png',
+    image: getAssetPath('/jersey-buffalo.png'),
   },
   {
     id: '6',

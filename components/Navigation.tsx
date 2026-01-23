@@ -16,6 +16,7 @@ import {
   IconX as TablerX
 } from '@tabler/icons-react';
 import EventHeader from './EventHeader';
+import { getAssetPath } from '@/lib/utils';
 
 const navItems = [
   { name: 'Watch', href: '/', icon: IconPlayerPlay },
@@ -108,7 +109,7 @@ export default function Navigation() {
         <div className="border-b border-[#4A9FD8]/20">
           <Link href="/" className="flex items-center justify-center h-[80px] p-4">
             <Image 
-              src="/logoSmall.png" 
+              src={getAssetPath('/logoSmall.png')}
               alt="3ICE Logo" 
               width={40} 
               height={40}
@@ -179,7 +180,7 @@ export default function Navigation() {
           {/* Center - Logo & Event Info */}
           <div className="flex items-center flex-1">
             <Image 
-              src="/Logo.png" 
+              src={getAssetPath('/Logo.png')}
               alt="3ICE Logo" 
               width={120} 
               height={40}
