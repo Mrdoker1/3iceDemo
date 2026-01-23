@@ -5,6 +5,276 @@ import { ChevronRight, MapPin, Calendar, Ticket, ZoomIn, ZoomOut, Move, ArrowLef
 import { Button, ActionIcon, NumberInput, Badge } from '@mantine/core';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// Canvas component for rendering seats
+interface SeatCanvasProps {
+  seatMap: Array<{
+    row: string;
+    seats: Array<{
+      number: number;
+      id: string;
+      occupied: boolean;
+    }>;
+  }>;
+  selectedSeats: string[];
+  onSeatClick: (seatId: string) => void;
+  zoom: number;
+  pan: { x: number; y: number };
+  isDragging: boolean;
+}
+
+const SeatCanvas: React.FC<SeatCanvasProps> = ({
+  seatMap,
+  selectedSeats,
+  onSeatClick,
+  zoom,
+  pan,
+  isDragging,
+}) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [hoveredSeat, setHoveredSeat] = useState<string | null>(null);
+
+  // Draw seats on canvas
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas size
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * window.devicePixelRatio;
+    canvas.height = rect.height * window.devicePixelRatio;
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+    // Clear canvas
+    ctx.clearRect(0, 0, rect.width, rect.height);
+
+    // Apply transformations
+    ctx.save();
+    ctx.translate(rect.width / 2 + pan.x, rect.height / 2 + pan.y);
+    ctx.scale(zoom, zoom);
+
+    const seatSize = 32;
+    const seatGap = 4;
+    const aisleGap = 40;
+    const rowGap = 6;
+    
+    // Calculate dimensions
+    const maxSeatsInRow = Math.max(...seatMap.map(r => r.seats.length));
+    const midPoint = Math.floor(maxSeatsInRow / 2);
+    const totalWidth = maxSeatsInRow * seatSize + (maxSeatsInRow - 1) * seatGap + aisleGap;
+    const totalHeight = seatMap.length * (seatSize + rowGap);
+    
+    const startX = -totalWidth / 2;
+    const startY = -totalHeight / 2;
+
+    // Draw stage label at bottom (like on stadium view)
+    ctx.fillStyle = '#1F2937';
+    const stageWidth = 200;
+    const stageHeight = 40;
+    ctx.fillRect(-stageWidth / 2, startY + totalHeight + 30, stageWidth, stageHeight);
+    ctx.fillStyle = '#9CA3AF';
+    ctx.font = 'bold 18px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('STAGE', 0, startY + totalHeight + 50);
+
+    seatMap.forEach((rowData, rowIndex) => {
+      const { row, seats } = rowData;
+      const rowMidPoint = Math.floor(seats.length / 2);
+      const y = startY + rowIndex * (seatSize + rowGap);
+
+      // Draw row label on the left
+      ctx.fillStyle = '#9CA3AF';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(row, startX - 15, y + seatSize / 2);
+
+      // Draw row label on the right
+      ctx.textAlign = 'left';
+      ctx.fillText(row, startX + totalWidth + 15, y + seatSize / 2);
+
+      seats.forEach((seat, seatIndex) => {
+        const xOffset = seatIndex >= rowMidPoint ? aisleGap : 0;
+        const x = startX + seatIndex * (seatSize + seatGap) + xOffset;
+
+        // Determine seat state
+        const isSelected = selectedSeats.includes(seat.id);
+        const isHovered = hoveredSeat === seat.id;
+        const isOccupied = seat.occupied;
+
+        // Draw seat
+        ctx.save();
+
+        if (isSelected) {
+          // Selected seat
+          ctx.fillStyle = '#4A9FD8';
+          ctx.strokeStyle = '#FFFFFF';
+          ctx.lineWidth = 2.5;
+          ctx.shadowColor = 'rgba(74, 159, 216, 0.6)';
+          ctx.shadowBlur = 12;
+        } else if (isOccupied) {
+          // Occupied seat
+          ctx.fillStyle = 'rgba(31, 41, 55, 0.5)';
+          ctx.strokeStyle = '#1F2937';
+          ctx.lineWidth = 1;
+        } else if (isHovered) {
+          // Hovered seat
+          ctx.fillStyle = '#4B5563';
+          ctx.strokeStyle = '#6B7280';
+          ctx.lineWidth = 2;
+        } else {
+          // Available seat
+          ctx.fillStyle = 'rgba(55, 65, 81, 0.5)';
+          ctx.strokeStyle = '#4B5563';
+          ctx.lineWidth = 1;
+        }
+
+        // Draw rounded rectangle for seat
+        const radius = 3;
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + seatSize - radius, y);
+        ctx.quadraticCurveTo(x + seatSize, y, x + seatSize, y + radius);
+        ctx.lineTo(x + seatSize, y + seatSize - radius);
+        ctx.quadraticCurveTo(x + seatSize, y + seatSize, x + seatSize - radius, y + seatSize);
+        ctx.lineTo(x + radius, y + seatSize);
+        ctx.quadraticCurveTo(x, y + seatSize, x, y + seatSize - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.restore();
+
+        // Draw seat number
+        ctx.fillStyle = isOccupied ? '#6B7280' : '#FFFFFF';
+        ctx.font = isSelected ? 'bold 11px sans-serif' : '600 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(String(seat.number), x + seatSize / 2, y + seatSize / 2);
+      });
+    });
+
+    ctx.restore();
+  }, [seatMap, selectedSeats, hoveredSeat, zoom, pan]);
+
+  // Handle mouse move for hover
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (isDragging) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    // Transform mouse coordinates to canvas space
+    const canvasX = (mouseX - rect.width / 2 - pan.x) / zoom;
+    const canvasY = (mouseY - rect.height / 2 - pan.y) / zoom;
+
+    const seatSize = 32;
+    const seatGap = 4;
+    const aisleGap = 40;
+    const rowGap = 6;
+    
+    const maxSeatsInRow = Math.max(...seatMap.map(r => r.seats.length));
+    const totalWidth = maxSeatsInRow * seatSize + (maxSeatsInRow - 1) * seatGap + aisleGap;
+    const totalHeight = seatMap.length * (seatSize + rowGap);
+    
+    const startX = -totalWidth / 2;
+    const startY = -totalHeight / 2;
+
+    let foundSeat: string | null = null;
+
+    seatMap.forEach((rowData, rowIndex) => {
+      const { seats } = rowData;
+      const rowMidPoint = Math.floor(seats.length / 2);
+      const y = startY + rowIndex * (seatSize + rowGap);
+
+      seats.forEach((seat, seatIndex) => {
+        const xOffset = seatIndex >= rowMidPoint ? aisleGap : 0;
+        const x = startX + seatIndex * (seatSize + seatGap) + xOffset;
+
+        if (
+          canvasX >= x &&
+          canvasX <= x + seatSize &&
+          canvasY >= y &&
+          canvasY <= y + seatSize
+        ) {
+          foundSeat = seat.id;
+        }
+      });
+    });
+
+    setHoveredSeat(foundSeat);
+  };
+
+  // Handle click
+  const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (isDragging) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    // Transform mouse coordinates to canvas space
+    const canvasX = (mouseX - rect.width / 2 - pan.x) / zoom;
+    const canvasY = (mouseY - rect.height / 2 - pan.y) / zoom;
+
+    const seatSize = 32;
+    const seatGap = 4;
+    const aisleGap = 40;
+    const rowGap = 6;
+    
+    const maxSeatsInRow = Math.max(...seatMap.map(r => r.seats.length));
+    const totalWidth = maxSeatsInRow * seatSize + (maxSeatsInRow - 1) * seatGap + aisleGap;
+    const totalHeight = seatMap.length * (seatSize + rowGap);
+    
+    const startX = -totalWidth / 2;
+    const startY = -totalHeight / 2;
+
+    seatMap.forEach((rowData, rowIndex) => {
+      const { seats } = rowData;
+      const rowMidPoint = Math.floor(seats.length / 2);
+      const y = startY + rowIndex * (seatSize + rowGap);
+
+      seats.forEach((seat, seatIndex) => {
+        const xOffset = seatIndex >= rowMidPoint ? aisleGap : 0;
+        const x = startX + seatIndex * (seatSize + seatGap) + xOffset;
+
+        if (
+          canvasX >= x &&
+          canvasX <= x + seatSize &&
+          canvasY >= y &&
+          canvasY <= y + seatSize &&
+          !seat.occupied
+        ) {
+          onSeatClick(seat.id);
+        }
+      });
+    });
+  };
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="w-full h-full"
+      style={{ cursor: isDragging ? 'grabbing' : hoveredSeat ? 'pointer' : 'grab' }}
+      onMouseMove={handleMouseMove}
+      onClick={handleClick}
+      onMouseLeave={() => setHoveredSeat(null)}
+    />
+  );
+};
+
 type SeatSection = {
   id: string;
   name: string;
@@ -94,19 +364,19 @@ export default function Home() {
 
     switch (selectedSection) {
       case 'lower':
-        rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];
-        seatsPerRow = 20;
-        occupiedSeats = ['A5', 'A6', 'B10', 'C3', 'D15', 'E8', 'F12', 'G7', 'H14', 'J8', 'K12'];
+        rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+        seatsPerRow = 32;
+        occupiedSeats = ['A5', 'A6', 'B10', 'C3', 'D15', 'E8', 'F12', 'G7', 'H14', 'A28', 'B22', 'D30', 'F25'];
         break;
       case 'club':
-        rows = ['A', 'B', 'C', 'D', 'E'];
-        seatsPerRow = 16;
-        occupiedSeats = ['A8', 'B4', 'C12', 'D7'];
+        rows = ['A', 'B', 'C'];
+        seatsPerRow = 24;
+        occupiedSeats = ['A8', 'B4', 'C12', 'B20'];
         break;
       case 'upper':
-        rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R'];
-        seatsPerRow = 24;
-        occupiedSeats = ['A10', 'B15', 'C20', 'E5', 'G18', 'I12', 'K8', 'M14', 'O20', 'Q6'];
+        rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+        seatsPerRow = 36;
+        occupiedSeats = ['A10', 'B15', 'C20', 'E5', 'G18', 'I12', 'A30', 'D25', 'F32', 'H28'];
         break;
       default:
         rows = ['A'];
@@ -141,6 +411,8 @@ export default function Home() {
       setSelectedSpecificSection(specificSectionId);
       setStep('seats');
       setSelectedSeats([]);
+      setZoom(1);
+      setPan({ x: 0, y: 0 });
     }
   };
 
@@ -149,7 +421,7 @@ export default function Home() {
     setSelectedSection(null);
     setSelectedSpecificSection(null);
     setSelectedSeats([]);
-    setZoom(1);
+    setZoom(0.8);
     setPan({ x: 0, y: 0 });
   };
 
@@ -636,88 +908,108 @@ export default function Home() {
                 </Button>
               </div>
 
-              {/* Seat Map - Full Screen */}
-              <div className="flex-1 flex flex-col items-center justify-start pt-12 pb-8 px-8 overflow-auto custom-scrollbar relative">
+              {/* Seat Map - Full Screen with Canvas */}
+              <div className="flex-1 flex flex-col items-center justify-center overflow-hidden relative">
                 {/* Legend - Top Left */}
-                <div className="absolute top-8 left-8 bg-black/80 backdrop-blur-sm px-4 py-3 rounded-xl flex items-center gap-6 z-10">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-gray-700/50 border border-gray-600 rounded-md" />
-                    <span className="text-sm font-medium text-gray-300">Available</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-[#4A9FD8] border-2 border-white rounded-md shadow-lg shadow-[#4A9FD8]/50" />
-                    <span className="text-sm font-medium text-gray-300">Selected</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-gray-800/50 border border-gray-800 rounded-md" />
-                    <span className="text-sm font-medium text-gray-300">Occupied</span>
-                  </div>
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="absolute top-8 left-8 inline-flex flex-col gap-2 bg-black/80 backdrop-blur-sm px-3 py-2 rounded-lg z-10"
+                >
+                  <motion.div 
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 0.3 }}
+                    className="flex items-center gap-1.5"
+                  >
+                    <div className="w-3 h-3 rounded bg-gray-700/50 border border-gray-600" />
+                    <span className="text-xs font-bold">Available</span>
+                  </motion.div>
+                  <motion.div 
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 0.4 }}
+                    className="flex items-center gap-1.5"
+                  >
+                    <div className="w-3 h-3 rounded bg-[#4A9FD8] border-2 border-white" />
+                    <span className="text-xs font-bold">Selected</span>
+                  </motion.div>
+                  <motion.div 
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 0.5 }}
+                    className="flex items-center gap-1.5"
+                  >
+                    <div className="w-3 h-3 rounded bg-gray-800/50 border border-gray-800" />
+                    <span className="text-xs font-bold">Occupied</span>
+                  </motion.div>
+                  <div className="h-px w-full bg-gray-600 my-1"></div>
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, delay: 0.6 }}
+                    className="flex items-center gap-2"
+                  >
+                    <Move size={14} className="text-[#4A9FD8]" />
+                    <span className="text-xs text-gray-400">Pan & Zoom</span>
+                  </motion.div>
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, delay: 0.7 }}
+                    className="flex items-center gap-2"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <path d="M8 2L8 14M8 2L5 5M8 2L11 5M8 14L5 11M8 14L11 11" stroke="#4A9FD8" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                    <span className="text-xs text-gray-400">Click Seat</span>
+                  </motion.div>
+                </motion.div>
+
+                {/* Zoom Controls - Top Right */}
+                <div className="absolute top-8 right-8 flex flex-col gap-2 z-10">
+                  <ActionIcon
+                    onClick={handleZoomIn}
+                    size="xl"
+                    variant="filled"
+                    color="dark"
+                    title="Zoom In"
+                  >
+                    <ZoomIn size={20} />
+                  </ActionIcon>
+                  <ActionIcon
+                    onClick={handleZoomOut}
+                    size="xl"
+                    variant="filled"
+                    color="dark"
+                    title="Zoom Out"
+                  >
+                    <ZoomOut size={20} />
+                  </ActionIcon>
                 </div>
 
-                <div className="w-full max-w-7xl mx-auto mt-16">
-                  
-                  {/* Seat Grid */}
-                  <div className="space-y-2">
-                    {seatMap.map(({ row, seats: rowSeats }) => {
-                      const midPoint = Math.floor(rowSeats.length / 2);
-                      const leftSeats = rowSeats.slice(0, midPoint);
-                      const rightSeats = rowSeats.slice(midPoint);
-                      
-                      return (
-                        <div key={row} className="flex items-center justify-center gap-3">
-                          <div className="w-8 text-base font-black text-gray-400 text-right flex-shrink-0">{row}</div>
-                          
-                          {/* Left side seats */}
-                          <div className="flex gap-1.5 justify-end">
-                            {leftSeats.map((seat) => (
-                              <button
-                                key={seat.id}
-                                onClick={() => !seat.occupied && handleSeatClick(seat.id)}
-                                disabled={seat.occupied}
-                                className={`w-9 h-9 text-xs font-bold rounded-md transition-all flex-shrink-0 ${
-                                  seat.occupied
-                                    ? 'bg-gray-800/50 text-gray-600 cursor-not-allowed border border-gray-800'
-                                    : selectedSeats.includes(seat.id)
-                                    ? 'bg-[#4A9FD8] text-white scale-110 shadow-xl shadow-[#4A9FD8]/50 border-2 border-white'
-                                    : 'bg-gray-700/50 hover:bg-gray-600 text-white border border-gray-600 hover:border-gray-500 hover:scale-105'
-                                }`}
-                                title={seat.occupied ? 'Occupied' : `Seat ${seat.id}`}
-                              >
-                                {seat.number}
-                              </button>
-                            ))}
-                          </div>
-                          
-                          {/* Center aisle */}
-                          <div className="w-12 flex-shrink-0"></div>
-                          
-                          {/* Right side seats */}
-                          <div className="flex gap-1.5 justify-start">
-                            {rightSeats.map((seat) => (
-                              <button
-                                key={seat.id}
-                                onClick={() => !seat.occupied && handleSeatClick(seat.id)}
-                                disabled={seat.occupied}
-                                className={`w-9 h-9 text-xs font-bold rounded-md transition-all flex-shrink-0 ${
-                                  seat.occupied
-                                    ? 'bg-gray-800/50 text-gray-600 cursor-not-allowed border border-gray-800'
-                                    : selectedSeats.includes(seat.id)
-                                    ? 'bg-[#4A9FD8] text-white scale-110 shadow-xl shadow-[#4A9FD8]/50 border-2 border-white'
-                                    : 'bg-gray-700/50 hover:bg-gray-600 text-white border border-gray-600 hover:border-gray-500 hover:scale-105'
-                                }`}
-                                title={seat.occupied ? 'Occupied' : `Seat ${seat.id}`}
-                              >
-                                {seat.number}
-                              </button>
-                            ))}
-                          </div>
-                          
-                          <div className="w-8 flex-shrink-0"></div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+                {/* Canvas Container */}
+                <motion.div 
+                  ref={svgContainerRef}
+                  className="relative w-full h-full cursor-move"
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseUp}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <SeatCanvas
+                    seatMap={seatMap}
+                    selectedSeats={selectedSeats}
+                    onSeatClick={handleSeatClick}
+                    zoom={zoom}
+                    pan={pan}
+                    isDragging={isDragging}
+                  />
+                </motion.div>
               </div>
 
             </div>
