@@ -411,7 +411,7 @@ export default function Home() {
       setSelectedSpecificSection(specificSectionId);
       setStep('seats');
       setSelectedSeats([]);
-      setZoom(1);
+      setZoom(0.9);
       setPan({ x: 0, y: 0 });
     }
   };
@@ -454,7 +454,7 @@ export default function Home() {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white flex overflow-hidden">
+    <div className="fixed inset-0 top-20 left-20 bg-gradient-to-b from-black via-gray-900 to-black text-white flex overflow-hidden">
       {/* Main Arena View - Full Height */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Arena/Seats View - Full Height */}
@@ -886,23 +886,23 @@ export default function Home() {
           ) : (
             /* Seat Selection View - Full Screen */
             <div className="absolute inset-0 flex flex-col">
-              {/* Top Info Bar */}
-              <div className="flex items-center justify-between px-8 py-6 bg-black/40 backdrop-blur-sm border-b border-gray-800">
-                <div className="flex items-center gap-6">
+              {/* Top Info Bar - Sticky */}
+              <div className="flex-shrink-0 flex items-center justify-between px-6 py-3 bg-black/80 backdrop-blur-md border-b border-gray-800 z-30">
+                <div className="flex items-center gap-4">
                   <div>
-                    <span className="text-white font-bold text-2xl">{selectedSpecificSectionData?.name || selectedSectionData?.name}</span>
+                    <span className="text-white font-bold text-lg">{selectedSpecificSectionData?.name || selectedSectionData?.name}</span>
                   </div>
-                  <div className="h-8 w-px bg-gray-700"></div>
-                  <div className="text-gray-400 text-lg">
-                    Price: <span className="text-[#4A9FD8] font-bold text-2xl">${selectedSectionData?.price}</span> per seat
+                  <div className="h-6 w-px bg-gray-700"></div>
+                  <div className="text-gray-400 text-sm">
+                    Price: <span className="text-[#4A9FD8] font-bold text-lg">${selectedSectionData?.price}</span> per seat
                   </div>
                 </div>
                 <Button
                   onClick={handleBack}
-                  leftSection={<ArrowLeft size={18} />}
+                  leftSection={<ArrowLeft size={16} />}
                   variant="subtle"
                   color="gray"
-                  size="lg"
+                  size="md"
                 >
                   Back to Arena
                 </Button>
@@ -1017,7 +1017,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Right Sidebar - Full height like left sidebar */}
+      {/* Right Sidebar - Fixed */}
       <div className="w-[420px] bg-black/98 backdrop-blur-md border-l border-[#4A9FD8]/20 flex flex-col">
         <div className="flex-1 overflow-auto p-6 space-y-4 custom-scrollbar">
           <div className="bg-gray-900/50 rounded-xl p-5 border border-gray-800">
