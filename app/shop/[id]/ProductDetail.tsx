@@ -213,8 +213,10 @@ export default function ProductDetail({ product, relatedProducts }: ProductDetai
 
             {/* Quantity */}
             <div className="mb-8">
-              <label className="block text-sm font-bold mb-3">Quantity</label>
+              <label htmlFor="product-quantity" className="block text-sm font-bold mb-3">Quantity</label>
               <NumberInput
+                id="product-quantity"
+                name="quantity"
                 value={quantity}
                 onChange={(val) => setQuantity(Number(val) || 1)}
                 min={1}

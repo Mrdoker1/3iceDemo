@@ -737,6 +737,8 @@ export default function Home() {
                   <p className="text-xs text-gray-500 uppercase tracking-wider mb-2 text-center">How Many Seats?</p>
                   <div className="flex items-center justify-center">
                     <NumberInput
+                      id="seat-count"
+                      name="seatCount"
                       value={seats}
                       onChange={(value) => {
                         setSeats(typeof value === 'number' ? value : 1);
