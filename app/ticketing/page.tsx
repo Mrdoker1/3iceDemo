@@ -32,6 +32,25 @@ const SeatCanvas: React.FC<SeatCanvasProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [hoveredSeat, setHoveredSeat] = useState<string | null>(null);
+  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+
+  // Handle window resize
+  useEffect(() => {
+    const updateCanvasSize = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      
+      const rect = canvas.getBoundingClientRect();
+      setCanvasSize({ width: rect.width, height: rect.height });
+    };
+
+    updateCanvasSize();
+    window.addEventListener('resize', updateCanvasSize);
+    
+    return () => {
+      window.removeEventListener('resize', updateCanvasSize);
+    };
+  }, []);
 
   // Draw seats on canvas
   useEffect(() => {
@@ -42,17 +61,16 @@ const SeatCanvas: React.FC<SeatCanvasProps> = ({
     if (!ctx) return;
 
     // Set canvas size
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * window.devicePixelRatio;
-    canvas.height = rect.height * window.devicePixelRatio;
+    canvas.width = canvasSize.width * window.devicePixelRatio;
+    canvas.height = canvasSize.height * window.devicePixelRatio;
     ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
 
     // Clear canvas
-    ctx.clearRect(0, 0, rect.width, rect.height);
+    ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
 
     // Apply transformations
     ctx.save();
-    ctx.translate(rect.width / 2 + pan.x, rect.height / 2 + pan.y);
+    ctx.translate(canvasSize.width / 2 + pan.x, canvasSize.height / 2 + pan.y);
     ctx.scale(zoom, zoom);
 
     const seatSize = 32;
@@ -160,7 +178,7 @@ const SeatCanvas: React.FC<SeatCanvasProps> = ({
     });
 
     ctx.restore();
-  }, [seatMap, selectedSeats, hoveredSeat, zoom, pan]);
+  }, [seatMap, selectedSeats, hoveredSeat, zoom, pan, canvasSize]);
 
   // Handle mouse move for hover
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -174,8 +192,8 @@ const SeatCanvas: React.FC<SeatCanvasProps> = ({
     const mouseY = e.clientY - rect.top;
 
     // Transform mouse coordinates to canvas space
-    const canvasX = (mouseX - rect.width / 2 - pan.x) / zoom;
-    const canvasY = (mouseY - rect.height / 2 - pan.y) / zoom;
+    const canvasX = (mouseX - canvasSize.width / 2 - pan.x) / zoom;
+    const canvasY = (mouseY - canvasSize.height / 2 - pan.y) / zoom;
 
     const seatSize = 32;
     const seatGap = 4;
@@ -226,8 +244,8 @@ const SeatCanvas: React.FC<SeatCanvasProps> = ({
     const mouseY = e.clientY - rect.top;
 
     // Transform mouse coordinates to canvas space
-    const canvasX = (mouseX - rect.width / 2 - pan.x) / zoom;
-    const canvasY = (mouseY - rect.height / 2 - pan.y) / zoom;
+    const canvasX = (mouseX - canvasSize.width / 2 - pan.x) / zoom;
+    const canvasY = (mouseY - canvasSize.height / 2 - pan.y) / zoom;
 
     const seatSize = 32;
     const seatGap = 4;
@@ -1124,14 +1142,31 @@ export default function Home() {
                       
                       // Dispatch cart update event
                       if (typeof window !== 'undefined') {
-                        const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
-                        existingCart.push(cartItem);
-                        localStorage.setItem('cart', JSON.stringify(existingCart));
-                        
-                        const event = new CustomEvent('cartUpdate', {
-                          detail: { count: existingCart.length, showCart: true }
-                        });
-                        window.dispatchEvent(event);
+                        try {
+                          const cartData = localStorage.getItem('cart');
+                          let existingCart: any[] = [];
+                          
+                          if (cartData) {
+                            const parsed = JSON.parse(cartData);
+                            existingCart = Array.isArray(parsed) ? parsed : [];
+                          }
+                          
+                          existingCart.push(cartItem);
+                          localStorage.setItem('cart', JSON.stringify(existingCart));
+                          
+                          const event = new CustomEvent('cartUpdate', {
+                            detail: { count: existingCart.length, showCart: true }
+                          });
+                          window.dispatchEvent(event);
+                        } catch (error) {
+                          console.error('Error adding to cart:', error);
+                          // Reset cart if corrupted
+                          localStorage.setItem('cart', JSON.stringify([cartItem]));
+                          const event = new CustomEvent('cartUpdate', {
+                            detail: { count: 1, showCart: true }
+                          });
+                          window.dispatchEvent(event);
+                        }
                       }
                       
                       // Reset selection

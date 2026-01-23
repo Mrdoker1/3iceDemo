@@ -42,9 +42,23 @@ export default function Navigation() {
   // Load cart from localStorage on mount
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
-      const savedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-      setCartItems(savedCart);
-      setCartItemsCount(savedCart.length);
+      try {
+        const cartData = localStorage.getItem('cart');
+        if (cartData) {
+          const parsed = JSON.parse(cartData);
+          const savedCart = Array.isArray(parsed) ? parsed : [];
+          setCartItems(savedCart);
+          setCartItemsCount(savedCart.length);
+        } else {
+          setCartItems([]);
+          setCartItemsCount(0);
+        }
+      } catch (error) {
+        console.error('Error loading cart:', error);
+        localStorage.setItem('cart', '[]');
+        setCartItems([]);
+        setCartItemsCount(0);
+      }
     }
   }, []);
 
@@ -76,13 +90,27 @@ export default function Navigation() {
     };
 
     const handleCartUpdate = (event: CustomEvent) => {
-      const savedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-      setCartItems(savedCart);
-      setCartItemsCount(event.detail.count);
-      
-      // Open cart if showCart flag is set
-      if (event.detail.showCart) {
-        setShowCart(true);
+      try {
+        const cartData = localStorage.getItem('cart');
+        if (cartData) {
+          const parsed = JSON.parse(cartData);
+          const savedCart = Array.isArray(parsed) ? parsed : [];
+          setCartItems(savedCart);
+          setCartItemsCount(event.detail.count);
+        } else {
+          setCartItems([]);
+          setCartItemsCount(0);
+        }
+        
+        // Open cart if showCart flag is set
+        if (event.detail.showCart) {
+          setShowCart(true);
+        }
+      } catch (error) {
+        console.error('Error updating cart:', error);
+        localStorage.setItem('cart', '[]');
+        setCartItems([]);
+        setCartItemsCount(0);
       }
     };
 
