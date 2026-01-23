@@ -244,7 +244,7 @@ export default function WatchPage() {
                                   price: 129.99,
                                   quantity: 1,
                                   total: 129.99,
-                                  image: '/jersey-minnesota.png'
+                                  image: getAssetPath('/jersey-minnesota.png')
                                 };
                                 
                                 if (typeof window !== 'undefined') {
@@ -306,7 +306,7 @@ export default function WatchPage() {
                                   price: 129.99,
                                   quantity: 1,
                                   total: 129.99,
-                                  image: '/jersey-buffalo.png'
+                                  image: getAssetPath('/jersey-buffalo.png')
                                 };
                                 
                                 if (typeof window !== 'undefined') {
@@ -345,7 +345,7 @@ export default function WatchPage() {
                         <div className="flex items-center justify-center gap-4 mb-6">
                           <div className="relative w-32 h-32 rounded-xl overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
                             <Image
-                              src={selectedTeam.includes('Minnesota') ? '/jersey-minnesota.png' : '/jersey-buffalo.png'}
+                              src={selectedTeam.includes('Minnesota') ? getAssetPath('/jersey-minnesota.png') : getAssetPath('/jersey-buffalo.png')}
                               alt={`${selectedTeam} Jersey`}
                               fill
                               className="object-contain p-2"
@@ -789,7 +789,7 @@ export default function WatchPage() {
                       price: 74.99,
                       quantity: 1,
                       total: 74.99,
-                      image: '/jersey-minnesota.png'
+                      image: getAssetPath('/jersey-minnesota.png')
                     };
                     
                     if (typeof window !== 'undefined') {
@@ -833,7 +833,7 @@ export default function WatchPage() {
                       price: 120.00,
                       quantity: 1,
                       total: 120.00,
-                      image: '/jersey-minnesota.png'
+                      image: getAssetPath('/jersey-minnesota.png')
                     };
                     
                     if (typeof window !== 'undefined') {
