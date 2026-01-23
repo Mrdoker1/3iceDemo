@@ -174,8 +174,8 @@ export default function WatchPage() {
           {/* Video Player */}
           <div className="relative aspect-video bg-black rounded-2xl overflow-hidden border-2 border-[#4A9FD8]/30">
             {/* Video Player */}
-            <VideoPlayer
-              src="/game-video.mp4"
+            <VideoPlayer 
+              src={`${process.env.NODE_ENV === 'production' ? '/3iceDemo' : ''}/game-video.mp4`}
               autoPlay={true}
               onPause={handlePause}
               onPlay={handlePlay}
