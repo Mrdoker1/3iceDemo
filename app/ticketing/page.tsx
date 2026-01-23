@@ -61,6 +61,7 @@ export default function Home() {
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const svgContainerRef = useRef<HTMLDivElement>(null);
 
   // Scroll to top on mount
   useEffect(() => {
@@ -167,9 +168,11 @@ export default function Home() {
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (isDragging) {
-      setPan({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y,
+      requestAnimationFrame(() => {
+        setPan({
+          x: e.clientX - dragStart.x,
+          y: e.clientY - dragStart.y,
+        });
       });
     }
   };
@@ -193,6 +196,7 @@ export default function Home() {
               transition={{ duration: 0.6 }}
             >
               <motion.div 
+                ref={svgContainerRef}
                 className="relative w-full h-full max-w-6xl cursor-move"
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
@@ -204,10 +208,12 @@ export default function Home() {
               >
                 <svg 
                   viewBox="0 0 1400 900" 
-                  className="w-full h-full transition-transform duration-200"
+                  className="w-full h-full"
                   style={{ 
-                    transform: `scale(${zoom}) translate(${pan.x / zoom}px, ${pan.y / zoom}px)`,
-                    transformOrigin: 'center center'
+                    transform: `scale(${zoom}) translate3d(${pan.x / zoom}px, ${pan.y / zoom}px, 0)`,
+                    transformOrigin: 'center center',
+                    willChange: isDragging ? 'transform' : 'auto',
+                    transition: isDragging ? 'none' : 'transform 0.2s ease-out'
                   }}
                 >
                   {/* Ice Rink - Flat View */}
