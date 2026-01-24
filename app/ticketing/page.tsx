@@ -497,7 +497,7 @@ export default function Home() {
                 transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
               >
                 <svg 
-                  viewBox="0 0 1400 900" 
+                  viewBox="0 0 1400 950" 
                   className="w-full h-full"
                   style={{ 
                     transform: `scale(${zoom}) translate3d(${pan.x / zoom}px, ${pan.y / zoom}px, 0)`,
