@@ -384,6 +384,7 @@ const specificSections: SpecificSection[] = [
   // Upper Bowl
   { id: 'section-117', name: 'Section 117', category: 'upper', stagePosition: 'right' },
   { id: 'section-110', name: 'Section 110', category: 'upper', stagePosition: 'left' },
+  { id: 'section-upper-center', name: 'Upper Bowl Center', category: 'upper', stagePosition: 'bottom' },
 ];
 
 export default function Home() {
@@ -619,15 +620,15 @@ export default function Home() {
                     />
                     <text x="1250" y="460" fill="white" fontSize="28" fontWeight="bold" textAnchor="middle" pointerEvents="none">110</text>
                     
-                    {/* Top - общая секция Upper Bowl */}
+                    {/* Top - Upper Bowl Center section */}
                     <rect 
                       x="220" y="50" width="960" height="80" rx="15" 
                       fill="#A855F7" 
-                      fillOpacity={hoveredSection === 'upper-top' ? "0.85" : "0.7"}
-                      stroke={hoveredSection === 'upper-top' ? "#FBBF24" : "#8B5CF6"}
-                      strokeWidth={hoveredSection === 'upper-top' ? "5" : "3"}
-                      onClick={() => handleSectionSelect('upper', 'section-117')}
-                      onMouseEnter={() => setHoveredSection('upper-top')}
+                      fillOpacity={hoveredSection === 'section-upper-center' ? "0.85" : "0.7"}
+                      stroke={hoveredSection === 'section-upper-center' ? "#FBBF24" : "#8B5CF6"}
+                      strokeWidth={hoveredSection === 'section-upper-center' ? "5" : "3"}
+                      onClick={() => handleSectionSelect('upper', 'section-upper-center')}
+                      onMouseEnter={() => setHoveredSection('section-upper-center')}
                       onMouseLeave={() => setHoveredSection(null)}
                       className="cursor-pointer transition-all"
                     />
