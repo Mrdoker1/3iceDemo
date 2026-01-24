@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import '@mantine/core/styles.css';
 import Navigation from "@/components/Navigation";
+import OxagileDisclaimer from "@/components/OxagileDisclaimer";
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 
 export const metadata: Metadata = {
@@ -78,6 +79,7 @@ export default function RootLayout({
           }}
         >
           <Navigation />
+          <OxagileDisclaimer />
           <main className="pt-20 pl-20">
             {children}
           </main>
