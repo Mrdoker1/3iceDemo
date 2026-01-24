@@ -20,6 +20,7 @@ interface SeatCanvasProps {
   zoom: number;
   pan: { x: number; y: number };
   isDragging: boolean;
+  stagePosition: 'top' | 'bottom' | 'left' | 'right';
 }
 
 const SeatCanvas: React.FC<SeatCanvasProps> = ({
@@ -29,6 +30,7 @@ const SeatCanvas: React.FC<SeatCanvasProps> = ({
   zoom,
   pan,
   isDragging,
+  stagePosition,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [hoveredSeat, setHoveredSeat] = useState<string | null>(null);
@@ -87,16 +89,59 @@ const SeatCanvas: React.FC<SeatCanvasProps> = ({
     const startX = -totalWidth / 2;
     const startY = -totalHeight / 2;
 
-    // Draw stage label at bottom (like on stadium view)
+    // Draw stage label based on position
     ctx.fillStyle = '#1F2937';
     const stageWidth = 200;
     const stageHeight = 40;
-    ctx.fillRect(-stageWidth / 2, startY + totalHeight + 30, stageWidth, stageHeight);
-    ctx.fillStyle = '#9CA3AF';
-    ctx.font = 'bold 18px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('STAGE', 0, startY + totalHeight + 50);
+    
+    switch (stagePosition) {
+      case 'top':
+        ctx.fillRect(-stageWidth / 2, startY - 70, stageWidth, stageHeight);
+        ctx.fillStyle = '#9CA3AF';
+        ctx.font = 'bold 18px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('STAGE', 0, startY - 50);
+        break;
+      case 'bottom':
+        ctx.fillRect(-stageWidth / 2, startY + totalHeight + 30, stageWidth, stageHeight);
+        ctx.fillStyle = '#9CA3AF';
+        ctx.font = 'bold 18px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('STAGE', 0, startY + totalHeight + 50);
+        break;
+      case 'left':
+        // Draw vertical stage on the left
+        const leftStageX = startX - 100;
+        const leftStageY = -stageWidth / 2;
+        ctx.fillRect(leftStageX, leftStageY, stageHeight, stageWidth);
+        ctx.fillStyle = '#9CA3AF';
+        ctx.font = 'bold 18px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.save();
+        ctx.translate(leftStageX + stageHeight / 2, 0);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText('STAGE', 0, 0);
+        ctx.restore();
+        break;
+      case 'right':
+        // Draw vertical stage on the right
+        const rightStageX = startX + totalWidth + 60;
+        const rightStageY = -stageWidth / 2;
+        ctx.fillRect(rightStageX, rightStageY, stageHeight, stageWidth);
+        ctx.fillStyle = '#9CA3AF';
+        ctx.font = 'bold 18px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.save();
+        ctx.translate(rightStageX + stageHeight / 2, 0);
+        ctx.rotate(Math.PI / 2);
+        ctx.fillText('STAGE', 0, 0);
+        ctx.restore();
+        break;
+    }
 
     seatMap.forEach((rowData, rowIndex) => {
       const { row, seats } = rowData;
@@ -305,6 +350,7 @@ type SpecificSection = {
   id: string;
   name: string;
   category: string;
+  stagePosition: 'top' | 'bottom' | 'left' | 'right';
 };
 
 const sections: SeatSection[] = [
@@ -314,28 +360,30 @@ const sections: SeatSection[] = [
 ];
 
 const specificSections: SpecificSection[] = [
-  // Lower Bowl
-  { id: 'section-114', name: 'Section 114', category: 'lower' },
-  { id: 'section-113', name: 'Section 113', category: 'lower' },
-  { id: 'section-113b', name: 'Section 113B', category: 'lower' },
-  { id: 'section-114b', name: 'Section 114B', category: 'lower' },
-  { id: 'section-115', name: 'Section 115', category: 'lower' },
-  { id: 'section-116', name: 'Section 116', category: 'lower' },
-  { id: 'section-104', name: 'Section 104', category: 'lower' },
-  { id: 'section-105', name: 'Section 105', category: 'lower' },
-  { id: 'section-106b', name: 'Section 106B', category: 'lower' },
-  { id: 'section-106', name: 'Section 106', category: 'lower' },
-  { id: 'section-107', name: 'Section 107', category: 'lower' },
-  { id: 'section-108', name: 'Section 108', category: 'lower' },
-  { id: 'section-101', name: 'Section 101', category: 'lower' },
-  { id: 'section-109', name: 'Section 109', category: 'lower' },
-  // Club Seats
-  { id: 'section-c1', name: 'Section C1', category: 'club' },
-  { id: 'section-c2', name: 'Section C2', category: 'club' },
-  { id: 'section-c3', name: 'Section C3', category: 'club' },
+  // Lower Bowl - Bottom sections (stage at top - above them)
+  { id: 'section-114', name: 'Section 114', category: 'lower', stagePosition: 'top' },
+  { id: 'section-113', name: 'Section 113', category: 'lower', stagePosition: 'top' },
+  { id: 'section-113b', name: 'Section 113B', category: 'lower', stagePosition: 'top' },
+  { id: 'section-114b', name: 'Section 114B', category: 'lower', stagePosition: 'top' },
+  { id: 'section-115', name: 'Section 115', category: 'lower', stagePosition: 'top' },
+  { id: 'section-116', name: 'Section 116', category: 'lower', stagePosition: 'top' },
+  // Lower Bowl - Top sections (stage at bottom - below them)
+  { id: 'section-104', name: 'Section 104', category: 'lower', stagePosition: 'bottom' },
+  { id: 'section-105', name: 'Section 105', category: 'lower', stagePosition: 'bottom' },
+  { id: 'section-106b', name: 'Section 106B', category: 'lower', stagePosition: 'bottom' },
+  { id: 'section-106', name: 'Section 106', category: 'lower', stagePosition: 'bottom' },
+  { id: 'section-107', name: 'Section 107', category: 'lower', stagePosition: 'bottom' },
+  { id: 'section-108', name: 'Section 108', category: 'lower', stagePosition: 'bottom' },
+  // Lower Bowl - Side sections
+  { id: 'section-101', name: 'Section 101', category: 'lower', stagePosition: 'right' },
+  { id: 'section-109', name: 'Section 109', category: 'lower', stagePosition: 'left' },
+  // Club Seats - Bottom (stage at top - above them)
+  { id: 'section-c1', name: 'Section C1', category: 'club', stagePosition: 'top' },
+  { id: 'section-c2', name: 'Section C2', category: 'club', stagePosition: 'top' },
+  { id: 'section-c3', name: 'Section C3', category: 'club', stagePosition: 'top' },
   // Upper Bowl
-  { id: 'section-117', name: 'Section 117', category: 'upper' },
-  { id: 'section-110', name: 'Section 110', category: 'upper' },
+  { id: 'section-117', name: 'Section 117', category: 'upper', stagePosition: 'right' },
+  { id: 'section-110', name: 'Section 110', category: 'upper', stagePosition: 'left' },
 ];
 
 export default function Home() {
@@ -1026,6 +1074,7 @@ export default function Home() {
                     zoom={zoom}
                     pan={pan}
                     isDragging={isDragging}
+                    stagePosition={selectedSpecificSectionData?.stagePosition || 'top'}
                   />
                 </motion.div>
               </div>
