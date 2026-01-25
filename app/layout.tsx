@@ -8,6 +8,11 @@ import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 export const metadata: Metadata = {
   title: "3ICE - The Best Part Of Hockey",
   description: "3-on-3 hockey action. Watch games, check schedule, and shop official merchandise.",
+  icons: {
+    icon: '/logoSmall.png',
+    shortcut: '/logoSmall.png',
+    apple: '/logoSmall.png',
+  },
 };
 
 export default function RootLayout({
