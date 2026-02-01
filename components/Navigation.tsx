@@ -224,7 +224,7 @@ export default function Navigation() {
               />
             )}
             
-            {/* Schedule/Shop/Watch Header */}
+            {/* Schedule/Shop/Watch/Matchup Header */}
             {scheduleHeader && (
               <div className="flex items-center gap-6 border-l border-gray-700 pl-4 ml-4">
                 <div>
@@ -238,10 +238,18 @@ export default function Navigation() {
                       <>
                         <span className="text-[#4A9FD8]">WATCH</span>
                       </>
-                    ) : (
+                    ) : scheduleHeader.title.includes('MATCHUP') ? (
+                      <>
+                        <span className="text-[#4A9FD8]">MATCHUP HUB</span>
+                      </>
+                    ) : scheduleHeader.title.includes('SHOP') ? (
                       <>
                         <span className="text-white">OFFICIAL </span>
                         <span className="text-[#4A9FD8]">SHOP</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-white">{scheduleHeader.title}</span>
                       </>
                     )}
                   </h1>
