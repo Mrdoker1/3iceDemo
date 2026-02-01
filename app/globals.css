@@ -86,9 +86,27 @@ button,
 
 /* Override Mantine default backgrounds */
 .mantine-Paper-root,
-.mantine-Modal-content,
-.mantine-Popover-dropdown {
+.mantine-Modal-content {
   background-color: transparent !important;
+}
+
+/* Mantine Combobox/Select dropdown */
+.mantine-Combobox-dropdown {
+  background-color: #4b5563 !important;
+  border: 1px solid #6b7280 !important;
+  padding: 0 !important;
+}
+
+.mantine-Combobox-option {
+  background-color: #4b5563 !important;
+  border-radius: 0 !important;
+  color: white !important;
+}
+
+.mantine-Combobox-option:hover,
+.mantine-Combobox-option[data-combobox-active] {
+  background-color: #4A9FD8 !important;
+  color: white !important;
 }
 
 /* Force dark backgrounds */

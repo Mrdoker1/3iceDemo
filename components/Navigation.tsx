@@ -19,9 +19,9 @@ import EventHeader from './EventHeader';
 import { getAssetPath } from '@/lib/utils';
 
 const navItems = [
-  { name: 'Watch', href: '/', icon: IconPlayerPlay },
+  { name: 'Schedule', href: '/', icon: IconCalendarEvent },
+  { name: 'Watch', href: '/watch', icon: IconPlayerPlay },
   { name: 'Ticketing', href: '/ticketing', icon: IconTicket },
-  { name: 'Schedule', href: '/schedule', icon: IconCalendarEvent },
   { name: 'Shop', href: '/shop', icon: IconShoppingBag },
 ];
 

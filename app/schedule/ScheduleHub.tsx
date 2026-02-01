@@ -1,44 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Calendar, Search, Star } from 'lucide-react';
 import { Badge, SegmentedControl, TextInput, Select, Switch } from '@mantine/core';
 import { motion } from 'framer-motion';
 import { mockScheduleWeeks, mockStandings, mockTopPerformers, educationalFacts, Game } from '@/lib/mockScheduleData';
-import ReadableFeaturedPanel from './components/ReadableFeaturedPanel';
-import ReadableLeagueCard from './components/ReadableLeagueCard';
-import ReadableGameAccordion from './components/ReadableGameAccordion';
-import ReadableWeekRail from './components/ReadableWeekRail';
-import ReadableLiveLikeCard from './components/ReadableLiveLikeCard';
+import CompactFeaturedPreview from './components/CompactFeaturedPreview';
+import CompactLeagueGrid from './components/CompactLeagueGrid';
+import CompactGameCenter from './components/CompactGameCenter';
+import CompactWeekSidebar from './components/CompactWeekSidebar';
+import CompactEngagement from './components/CompactEngagement';
 
-export default function ScheduleHubHomepage() {
+export default function ScheduleHub() {
   const [selectedWeek, setSelectedWeek] = useState<string>('1');
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [featuredOnly, setFeaturedOnly] = useState(false);
-
-  // Update header on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const event = new CustomEvent('scheduleHeaderUpdate', {
-        detail: {
-          title: 'SCHEDULE + MATCHUP INTELLIGENCE',
-          subtitle: 'ESPN-style schedule hub with betting odds, predictions & fan engagement',
-          stats: null
-        }
-      });
-      window.dispatchEvent(event);
-    }
-
-    return () => {
-      if (typeof window !== 'undefined') {
-        const event = new CustomEvent('resetHeader');
-        window.dispatchEvent(event);
-      }
-    };
-  }, []);
 
   const currentWeekData = mockScheduleWeeks.find(w => w.week === parseInt(selectedWeek));
   let currentGames = currentWeekData?.games || [];
@@ -86,26 +65,27 @@ export default function ScheduleHubHomepage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black">
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-4">
+      <div className="max-w-[1600px] mx-auto px-3 sm:px-4 lg:px-6 py-4">
         
-        {/* Compact Filters Row - Readable */}
+        {/* Compact Top Controls Row */}
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: 0.3 }}
           className="mb-4"
         >
-          <div className="bg-black/40 backdrop-blur-sm border border-[#4A9FD8]/20 rounded-lg p-3">
-            <div className="flex flex-wrap items-center gap-3">
+          <div className="bg-black/40 backdrop-blur-sm border border-[#4A9FD8]/20 rounded-lg p-2.5">
+            {/* Single Row: Title + Week + Filters */}
+            <div className="flex flex-wrap items-center gap-2 lg:gap-3">
               <div className="flex items-center gap-2">
-                <Calendar className="text-[#4A9FD8]" size={20} />
-                <span className="text-base font-black text-white">SCHEDULE HUB</span>
+                <Calendar className="text-[#4A9FD8]" size={18} />
+                <h2 className="text-lg font-black text-white">SCHEDULE HUB</h2>
               </div>
               
               <SegmentedControl
                 value={selectedWeek}
                 onChange={setSelectedWeek}
-                size="sm"
+                size="xs"
                 data={[
                   { label: 'Week 1', value: '1' },
                   { label: 'Week 2', value: '2' },
@@ -113,72 +93,78 @@ export default function ScheduleHubHomepage() {
                 classNames={{
                   root: '!bg-black/60',
                   indicator: '!bg-[#4A9FD8]',
-                  label: 'text-white font-bold text-sm px-4',
+                  label: 'text-white font-bold text-xs px-3',
                 }}
               />
 
-              <div className="hidden lg:block h-5 w-px bg-gray-700"></div>
+              <div className="hidden lg:block h-4 w-px bg-gray-700"></div>
 
               <Select
                 placeholder="Team"
-                size="sm"
+                size="xs"
                 data={[{ value: '', label: 'All Teams' }, ...allTeams.map(t => ({ value: t, label: t }))]}
                 value={selectedTeam}
                 onChange={setSelectedTeam}
                 clearable
-                className="w-36"
+                className="w-32"
                 classNames={{
-                  input: '!bg-black/60 !border-gray-700 !text-white !text-sm',
+                  input: '!bg-black/60 !border-gray-700 !text-white !text-xs !h-7',
+                  dropdown: '!bg-black !border-gray-700 !shadow-xl',
+                  option: '!text-white hover:!bg-[#4A9FD8]/30 !text-xs !bg-black',
                 }}
               />
 
               <Select
                 placeholder="Status"
-                size="sm"
+                size="xs"
                 data={[
-                  { value: 'all', label: 'All Status' },
+                  { value: 'all', label: 'All' },
                   { value: 'live', label: 'Live' },
                   { value: 'upcoming', label: 'Upcoming' },
                   { value: 'final', label: 'Final' },
                 ]}
                 value={selectedStatus}
                 onChange={(val) => setSelectedStatus(val || 'all')}
-                className="w-32"
+                className="w-28"
                 classNames={{
-                  input: '!bg-black/60 !border-gray-700 !text-white !text-sm',
+                  input: '!bg-black/60 !border-gray-700 !text-white !text-xs !h-7',
+                  dropdown: '!bg-black !border-gray-700 !shadow-xl',
+                  option: '!text-white hover:!bg-[#4A9FD8]/30 !text-xs !bg-black',
                 }}
               />
 
               <Select
                 placeholder="City"
-                size="sm"
+                size="xs"
                 data={[{ value: '', label: 'All Cities' }, ...allCities.map(c => ({ value: c, label: c }))]}
                 value={selectedCity}
                 onChange={setSelectedCity}
                 clearable
-                className="w-32"
+                className="w-28"
                 classNames={{
-                  input: '!bg-black/60 !border-gray-700 !text-white !text-sm',
+                  input: '!bg-black/60 !border-gray-700 !text-white !text-xs !h-7',
+                  dropdown: '!bg-black !border-gray-700 !shadow-xl',
+                  option: '!text-white hover:!bg-[#4A9FD8]/30 !text-xs !bg-black',
                 }}
               />
 
               <TextInput
-                placeholder="Search games..."
-                size="sm"
+                placeholder="Search..."
+                size="xs"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                leftSection={<Search size={16} className="text-gray-400" />}
-                className="w-40"
+                leftSection={<Search size={14} className="text-gray-400" />}
+                className="w-32"
                 classNames={{
-                  input: '!bg-black/60 !border-gray-700 !text-white placeholder:!text-gray-500 !text-sm',
+                  input: '!bg-black/60 !border-gray-700 !text-white placeholder:!text-gray-500 !text-xs !h-7',
                 }}
               />
 
-              <div className="flex items-center gap-2 bg-black/60 border border-gray-700 rounded px-3 py-2">
-                <Star size={16} className={featuredOnly ? 'text-[#4A9FD8]' : 'text-gray-400'} />
-                <span className="text-sm text-white">Featured</span>
+              <div className="flex items-center gap-1.5 bg-black/60 border border-gray-700 rounded px-2 py-1">
+                <Star size={14} className={featuredOnly ? 'text-[#4A9FD8]' : 'text-gray-400'} />
+                <span className="text-xs text-white">Featured</span>
                 <Switch
-                  size="sm"
+                  size="xs"
                   checked={featuredOnly}
                   onChange={(e) => setFeaturedOnly(e.currentTarget.checked)}
                   classNames={{
@@ -190,59 +176,48 @@ export default function ScheduleHubHomepage() {
           </div>
         </motion.div>
 
-        {/* 12-Column Grid Layout */}
-        <div className="grid grid-cols-12 gap-4">
-          {/* ROW 1: Featured Matchup (cols 1-8) + Week Rail (cols 9-12) */}
-          <div className="col-span-12 lg:col-span-8">
-            {featuredGame && <ReadableFeaturedPanel game={featuredGame} />}
-          </div>
-          
-          <div className="col-span-12 lg:col-span-4">
-            <ReadableWeekRail games={currentGames} selectedWeek={selectedWeek} />
-          </div>
+        {/* Dense Main Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+          {/* LEFT COLUMN (3/4 width) */}
+          <div className="lg:col-span-3 space-y-4">
+            {/* Compact Featured Game Preview */}
+            {featuredGame && <CompactFeaturedPreview game={featuredGame} />}
 
-          {/* ROW 2: Standings (cols 1-4) + Leaders (cols 5-8) + LiveLike (cols 9-12) */}
-          <div className="col-span-12 md:col-span-4">
-            <ReadableLeagueCard
+            {/* Compact League Grid (3 cards in 1 row) */}
+            <CompactLeagueGrid
               standings={mockStandings}
-              type="standings"
-            />
-          </div>
-
-          <div className="col-span-12 md:col-span-4">
-            <ReadableLeagueCard
               topPerformers={mockTopPerformers}
-              type="leaders"
+              educationalFacts={educationalFacts}
             />
-          </div>
 
-          <div className="col-span-12 md:col-span-4">
-            <ReadableLiveLikeCard />
-          </div>
+            {/* Compact Game Center */}
+            <CompactGameCenter games={currentGames} />
 
-          {/* ROW 3: Game Center (collapsed) */}
-          <div className="col-span-12">
-            <ReadableGameAccordion games={currentGames} />
-          </div>
+            {/* Compact Engagement (Collapsed) */}
+            <CompactEngagement />
 
-          {/* Disclaimer Footer */}
-          <div className="col-span-12">
-            <div className="bg-black/30 border border-gray-700/50 rounded-lg p-3">
-              <div className="flex flex-wrap gap-4 text-sm text-gray-400">
-                <div className="flex items-center gap-2">
-                  <Badge size="sm" className="!bg-[#4A9FD8]/20 !text-[#4A9FD8]">Tickets</Badge>
-                  <span>External redirect via Ticketmaster</span>
+            {/* Disclaimer Footer Bar */}
+            <div className="bg-black/30 border border-gray-700/50 rounded-lg p-2.5">
+              <div className="flex flex-wrap gap-3 text-xs text-gray-400">
+                <div className="flex items-center gap-1.5">
+                  <Badge size="xs" className="!bg-[#4A9FD8]/20 !text-[#4A9FD8]">Tickets</Badge>
+                  <span>via Ticketmaster</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge size="sm" className="!bg-purple-600/20 !text-purple-400">Merch</Badge>
+                <div className="flex items-center gap-1.5">
+                  <Badge size="xs" className="!bg-purple-600/20 !text-purple-400">Merch</Badge>
                   <span>Fulfilled by partner</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge size="sm" className="!bg-orange-600/20 !text-orange-400">Betting</Badge>
+                <div className="flex items-center gap-1.5">
+                  <Badge size="xs" className="!bg-orange-600/20 !text-orange-400">Betting</Badge>
                   <span>Redirects to sportsbook</span>
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* RIGHT SIDEBAR (1/4 width) - STICKY */}
+          <div className="lg:col-span-1">
+            <CompactWeekSidebar games={currentGames} selectedWeek={selectedWeek} />
           </div>
         </div>
       </div>
