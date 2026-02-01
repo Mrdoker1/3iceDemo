@@ -223,7 +223,7 @@ const SeatCanvas: React.FC<SeatCanvasProps> = ({
     });
 
     ctx.restore();
-  }, [seatMap, selectedSeats, hoveredSeat, zoom, pan, canvasSize]);
+  }, [seatMap, selectedSeats, hoveredSeat, zoom, pan, canvasSize, stagePosition]);
 
   // Handle mouse move for hover
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {

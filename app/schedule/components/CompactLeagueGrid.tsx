@@ -75,7 +75,7 @@ export default function CompactLeagueGrid({ standings, topPerformers, educationa
           <Lightbulb className="text-[#4A9FD8]" size={14} />
           <h4 className="text-xs font-black text-white uppercase">Did You Know?</h4>
         </div>
-        <div className="text-xs text-gray-500 mb-2">This week's context</div>
+        <div className="text-xs text-gray-500 mb-2">This week&apos;s context</div>
         <div className="space-y-2">
           {educationalFacts.slice(0, 2).map((fact, idx) => (
             <div key={idx} className="flex items-start gap-1.5">

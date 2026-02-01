@@ -117,7 +117,7 @@ export default function MatchupClient({ game }: MatchupClientProps) {
               MATCHUP NOT FOUND
             </h1>
             <p className="text-gray-400 mb-8">
-              The matchup you're looking for doesn't exist or has been removed.
+              The matchup you&apos;re looking for doesn&apos;t exist or has been removed.
             </p>
             <Link href="/">
               <Button 
@@ -724,7 +724,7 @@ export default function MatchupClient({ game }: MatchupClientProps) {
               className="hidden lg:block"
             >
               <div className="bg-black/40 backdrop-blur-sm border border-[#4A9FD8]/20 rounded-xl p-4 sticky top-24">
-                <h4 className="text-sm font-black text-white mb-3 uppercase">This Week's Games</h4>
+                <h4 className="text-sm font-black text-white mb-3 uppercase">This Week&apos;s Games</h4>
                 <div className="space-y-3">
                   {currentWeekGames.map((weekGame) => (
                     <div

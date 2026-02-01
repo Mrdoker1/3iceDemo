@@ -80,7 +80,7 @@ export default function CompactEngagement() {
             <div className="space-y-1.5 text-xs">
               <div className="flex gap-1.5">
                 <span className="text-purple-400 font-bold text-xs">@HockeyFan23:</span>
-                <span className="text-gray-300 text-xs">Let's go Minnesota! 🏒</span>
+                <span className="text-gray-300 text-xs">Let&apos;s go Minnesota! 🏒</span>
               </div>
               <div className="flex gap-1.5">
                 <span className="text-pink-400 font-bold text-xs">@BuffaloFan:</span>

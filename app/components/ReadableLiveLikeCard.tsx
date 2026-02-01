@@ -133,7 +133,7 @@ export default function ReadableLiveLikeCard({ hasLiveGame = false }: ReadableLi
               <div className="space-y-2 text-sm">
                 <div className="flex gap-2">
                   <span className="text-purple-400 font-bold">@HockeyFan23:</span>
-                  <span className="text-gray-300">Let's go Minnesota! 🏒</span>
+                  <span className="text-gray-300">Let&apos;s go Minnesota! 🏒</span>
                 </div>
                 <div className="flex gap-2">
                   <span className="text-pink-400 font-bold">@BuffaloFan:</span>

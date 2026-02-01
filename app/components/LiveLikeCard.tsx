@@ -80,7 +80,7 @@ export default function LiveLikeCard() {
               <div className="space-y-1 text-xs">
                 <div className="flex gap-1">
                   <span className="text-purple-400 font-bold text-xs">@Fan23:</span>
-                  <span className="text-gray-300 text-xs">Let's go! 🏒</span>
+                  <span className="text-gray-300 text-xs">Let&apos;s go! 🏒</span>
                 </div>
                 <div className="flex gap-1">
                   <span className="text-pink-400 font-bold text-xs">@Buffalo:</span>
