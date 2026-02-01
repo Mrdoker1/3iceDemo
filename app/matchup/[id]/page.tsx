@@ -9,11 +9,14 @@ export function generateStaticParams() {
   }));
 }
 
-export default function MatchupPage({ params }: { params: { id: string } }) {
+export default async function MatchupPage({ params }: { params: Promise<{ id: string }> }) {
+  // Await params in Next.js 15
+  const { id } = await params;
+  
   // Find the game by ID on the server
   const game = mockScheduleWeeks
     .flatMap(week => week.games)
-    .find(g => g.id === params.id);
+    .find(g => g.id === id);
 
   return <MatchupClient game={game || null} />;
 }
