@@ -4,7 +4,59 @@ import { MessageCircle, BarChart3, Users, ExternalLink } from 'lucide-react';
 import { Badge, Button, Progress, Tabs } from '@mantine/core';
 import { motion } from 'framer-motion';
 
-export default function ReadableLiveLikeCard() {
+interface ReadableLiveLikeCardProps {
+  hasLiveGame?: boolean;
+}
+
+export default function ReadableLiveLikeCard({ hasLiveGame = false }: ReadableLiveLikeCardProps) {
+  // Collapsed state for non-live games
+  if (!hasLiveGame) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
+        className="bg-gradient-to-br from-purple-900/10 to-pink-900/10 border border-purple-500/20 rounded-xl overflow-hidden h-full"
+      >
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Badge size="md" className="!bg-purple-600/50 !text-white">
+                LiveLike
+              </Badge>
+              <span className="text-sm text-white font-bold">Fan Engagement</span>
+            </div>
+            <Badge size="sm" className="!bg-gray-700 !text-gray-400">
+              Offline
+            </Badge>
+          </div>
+
+          <div className="bg-black/40 rounded-lg p-4 text-center">
+            <MessageCircle className="text-purple-400/50 mx-auto mb-3" size={32} />
+            <h4 className="text-sm font-bold text-white mb-2">Available During Live Games</h4>
+            <p className="text-xs text-gray-400 mb-4">
+              Join live polls, chat with fans, and participate in real-time engagement when games are in progress.
+            </p>
+            <a href="https://www.livelike.com" target="_blank" rel="noopener noreferrer">
+              <Button
+                size="sm"
+                fullWidth
+                variant="outline"
+                className="!border-purple-500/50 !text-purple-400"
+                rightSection={<ExternalLink size={14} />}
+              >
+                Learn More
+              </Button>
+            </a>
+          </div>
+
+          <div className="text-xs text-gray-500 text-center mt-3">Powered by LiveLike • Partner integration</div>
+        </div>
+      </motion.div>
+    );
+  }
+
+  // Full expanded state for live games
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}

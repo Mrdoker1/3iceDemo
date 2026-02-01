@@ -101,6 +101,84 @@ export default function ReadableFeaturedPanel({ game }: ReadableFeaturedPanelPro
           </div>
         </div>
 
+        {/* Snapshot Chips Row - Compact Stats */}
+        {(game.teams.teamA.streak || game.teams.teamA.gfpg) && (
+          <div className="bg-black/30 rounded-lg p-3 mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-bold text-gray-500 uppercase">Quick Snapshot</span>
+              <span className="text-xs text-gray-600">• Data from OutSportsData API</span>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {/* Team A Stats */}
+              <div className="flex flex-wrap gap-2">
+                {game.teams.teamA.streak && (
+                  <Badge size="sm" className="!bg-[#4A9FD8]/20 !text-[#4A9FD8]">
+                    Streak: {game.teams.teamA.streak}
+                  </Badge>
+                )}
+                {game.teams.teamA.gfpg && (
+                  <Badge size="sm" className="!bg-green-600/20 !text-green-400">
+                    GF/G: {game.teams.teamA.gfpg}
+                  </Badge>
+                )}
+                {game.teams.teamA.gapg && (
+                  <Badge size="sm" className="!bg-red-600/20 !text-red-400">
+                    GA/G: {game.teams.teamA.gapg}
+                  </Badge>
+                )}
+                {game.teams.teamA.pp && (
+                  <Badge size="sm" className="!bg-purple-600/20 !text-purple-400">
+                    PP: {game.teams.teamA.pp}
+                  </Badge>
+                )}
+                {game.teams.teamA.pk && (
+                  <Badge size="sm" className="!bg-blue-600/20 !text-blue-400">
+                    PK: {game.teams.teamA.pk}
+                  </Badge>
+                )}
+                {game.teams.teamA.fo && (
+                  <Badge size="sm" className="!bg-orange-600/20 !text-orange-400">
+                    FO: {game.teams.teamA.fo}
+                  </Badge>
+                )}
+              </div>
+              {/* Team B Stats */}
+              <div className="flex flex-wrap gap-2 justify-end">
+                {game.teams.teamB.streak && (
+                  <Badge size="sm" className="!bg-gray-600/20 !text-gray-400">
+                    Streak: {game.teams.teamB.streak}
+                  </Badge>
+                )}
+                {game.teams.teamB.gfpg && (
+                  <Badge size="sm" className="!bg-green-600/20 !text-green-400">
+                    GF/G: {game.teams.teamB.gfpg}
+                  </Badge>
+                )}
+                {game.teams.teamB.gapg && (
+                  <Badge size="sm" className="!bg-red-600/20 !text-red-400">
+                    GA/G: {game.teams.teamB.gapg}
+                  </Badge>
+                )}
+                {game.teams.teamB.pp && (
+                  <Badge size="sm" className="!bg-purple-600/20 !text-purple-400">
+                    PP: {game.teams.teamB.pp}
+                  </Badge>
+                )}
+                {game.teams.teamB.pk && (
+                  <Badge size="sm" className="!bg-blue-600/20 !text-blue-400">
+                    PK: {game.teams.teamB.pk}
+                  </Badge>
+                )}
+                {game.teams.teamB.fo && (
+                  <Badge size="sm" className="!bg-orange-600/20 !text-orange-400">
+                    FO: {game.teams.teamB.fo}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* 3-Column Content Area */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
           {/* Left Column: Why It Matters + Win Prob */}
@@ -166,10 +244,10 @@ export default function ReadableFeaturedPanel({ game }: ReadableFeaturedPanelPro
                 </div>
                 <a href="https://www.draftkings.com" target="_blank" rel="noopener noreferrer">
                   <Button size="sm" fullWidth variant="outline" className="!border-[#4A9FD8]/50 !text-[#4A9FD8]" rightSection={<ExternalLink size={14} />}>
-                    Bet Now ↗
+                    Bet Now
                   </Button>
                 </a>
-                <div className="text-xs text-gray-500 mt-2 text-center">Sportsbook redirects</div>
+                <div className="text-xs text-gray-500 mt-2 text-center">Sportsbook redirect</div>
               </div>
             )}
           </div>
@@ -286,18 +364,21 @@ export default function ReadableFeaturedPanel({ game }: ReadableFeaturedPanelPro
           </Tabs.Panel>
         </Tabs>
 
-        {/* Bottom CTAs - Slim Row */}
+        {/* Bottom CTAs - Slim Row with Integration Badges */}
         <div className="flex gap-3">
           <Link href={`/matchup/${game.id}`} className="flex-1">
             <Button size="md" fullWidth className="!bg-[#4A9FD8] hover:!bg-[#3a8fc8] !text-white font-bold">
               Matchup Hub
             </Button>
           </Link>
-          <a href={game.ticketUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
-            <Button size="md" fullWidth variant="outline" className="!border-[#4A9FD8] !text-[#4A9FD8]" leftSection={<Ticket size={16} />} rightSection={<ExternalLink size={14} />}>
-              Tickets
-            </Button>
-          </a>
+          <div className="flex-1">
+            <a href={game.ticketUrl} target="_blank" rel="noopener noreferrer">
+              <Button size="md" fullWidth variant="outline" className="!border-[#4A9FD8] !text-[#4A9FD8]" leftSection={<Ticket size={16} />} rightSection={<ExternalLink size={14} />}>
+                Tickets
+              </Button>
+            </a>
+            <div className="text-xs text-gray-500 text-center mt-1">Partner redirect</div>
+          </div>
           {game.vodUrl && (
             <Button size="md" variant="outline" className="!border-white/30 !text-white" leftSection={<Play size={16} />}>
               Watch

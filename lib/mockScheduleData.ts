@@ -3,6 +3,12 @@ export interface Team {
   logo: string;
   record: string;
   last5: string;
+  streak?: string;
+  gfpg?: string; // Goals For Per Game
+  gapg?: string; // Goals Against Per Game
+  pp?: string;   // Power Play %
+  pk?: string;   // Penalty Kill %
+  fo?: string;   // Faceoff Win %
 }
 
 export interface KeyStat {
@@ -59,6 +65,7 @@ export interface Game {
   venue: string;
   city?: string;
   status: 'Upcoming' | 'Final' | 'Live';
+  liveStatus?: string; // e.g., "2nd • 3:21"
   whyItMatters?: string;
   winProb?: {
     teamA: number;
@@ -79,6 +86,7 @@ export interface Game {
     teamB: TeamLeader[];
   };
   injuries?: InjuryReport[];
+  injuriesCount?: number;
   didYouKnow?: string[];
   ticketUrl: string;
   vodUrl?: string;
@@ -133,8 +141,8 @@ export const mockTopPerformers: TopPerformer[] = [
 ];
 
 export const educationalFacts = [
-  '3ICE features 3-on-3 hockey with running clocks and unique overtime rules that create fast-paced, high-scoring action.',
-  'In 3ICE, games are played in two 8-minute halves with a shootout if tied, making every second count.',
+  'NHL adopted 3-on-3 overtime in 2015 to reduce shootouts and create more exciting sudden-death finishes.',
+  '3ICE games are played in two 8-minute halves with a shootout if tied, making every second count.',
   'The Patrick Cup is named after hockey legend Craig Patrick, celebrating excellence in the 3-on-3 format.',
   'Power plays in 3ICE create 3-on-2 situations, leading to more scoring opportunities than traditional 5-on-5 hockey.',
   'Each 3ICE team consists of 6 skaters and 1 goaltender, emphasizing speed and skill over traditional positional play.',
@@ -155,12 +163,24 @@ export const mockScheduleWeeks: ScheduleWeek[] = [
             logo: '/Minnesota.png',
             record: '12-4-0',
             last5: 'W-W-L-W-W',
+            streak: 'W4',
+            gfpg: '4.2',
+            gapg: '2.8',
+            pp: '28.5%',
+            pk: '82.3%',
+            fo: '52.1%',
           },
           teamB: {
             name: 'Buffalo',
             logo: '/Buffalo.png',
             record: '11-5-0',
             last5: 'W-L-W-W-L',
+            streak: 'W2',
+            gfpg: '3.8',
+            gapg: '3.1',
+            pp: '24.1%',
+            pk: '79.8%',
+            fo: '48.9%',
           },
         },
         venue: 'F & M Bank Arena, Clarksville, TN',
@@ -212,6 +232,7 @@ export const mockScheduleWeeks: ScheduleWeek[] = [
           { player: 'Jack Eichel Jr.', team: 'teamB', status: 'Out', injury: 'Lower Body' },
           { player: 'Matt Dumba', team: 'teamB', status: 'Questionable', injury: 'Ankle' },
         ],
+        injuriesCount: 3,
         keyStats: [
           { label: 'Goals Per Game', teamA: '4.2', teamB: '3.8' },
           { label: 'Power Play %', teamA: '28.5%', teamB: '24.1%' },
@@ -461,12 +482,24 @@ export const mockScheduleWeeks: ScheduleWeek[] = [
             logo: '/Buffalo.png',
             record: '12-5-0',
             last5: 'W-W-L-W-W',
+            streak: 'W3',
+            gfpg: '4.0',
+            gapg: '3.0',
+            pp: '25.8%',
+            pk: '81.2%',
+            fo: '50.2%',
           },
           teamB: {
             name: 'Minnesota',
             logo: '/Minnesota.png',
             record: '12-5-0',
             last5: 'W-L-W-W-W',
+            streak: 'W4',
+            gfpg: '4.2',
+            gapg: '2.8',
+            pp: '28.5%',
+            pk: '82.3%',
+            fo: '52.1%',
           },
         },
         venue: 'LeCom Harborcenter, Buffalo, NY',
@@ -513,6 +546,7 @@ export const mockScheduleWeeks: ScheduleWeek[] = [
           { player: 'Rasmus Dahlin Jr.', team: 'teamA', status: 'Questionable', injury: 'Upper Body' },
           { player: 'Jared Spurgeon', team: 'teamB', status: 'Day-to-Day', injury: 'Groin' },
         ],
+        injuriesCount: 2,
         keyStats: [
           { label: 'Goals Per Game', teamA: '4.0', teamB: '4.2' },
           { label: 'Power Play %', teamA: '25.8%', teamB: '28.5%' },
@@ -664,17 +698,30 @@ export const mockScheduleWeeks: ScheduleWeek[] = [
             logo: '/logoSmall.png',
             record: '10-7-0',
             last5: 'W-W-L-W-L',
+            streak: 'L1',
+            gfpg: '3.9',
+            gapg: '3.2',
+            pp: '26.2%',
+            pk: '80.5%',
+            fo: '51.3%',
           },
           teamB: {
             name: 'Boston',
             logo: '/logoSmall.png',
             record: '8-9-0',
             last5: 'L-W-L-W-L',
+            streak: 'L2',
+            gfpg: '3.5',
+            gapg: '3.6',
+            pp: '22.8%',
+            pk: '78.9%',
+            fo: '49.1%',
           },
         },
         venue: 'Fox Valley Ice Arena, Geneva, IL',
         city: 'Geneva',
         status: 'Live',
+        liveStatus: '2nd Half • 3:21',
         whyItMatters: 'Chicago remains undefeated at home this season and looks to extend that streak against a struggling Boston team. The Bruins need a road win to keep their playoff hopes alive, but Chicago\'s fortress-like home record makes this an uphill battle.',
         score: {
           teamA: 2,

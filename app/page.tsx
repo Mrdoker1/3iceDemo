@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Calendar, Search, Star } from 'lucide-react';
 import { Badge, SegmentedControl, TextInput, Select, Switch } from '@mantine/core';
 import { motion } from 'framer-motion';
-import { mockScheduleWeeks, mockStandings, mockTopPerformers, educationalFacts, Game } from '@/lib/mockScheduleData';
+import { mockScheduleWeeks, mockStandings, mockTopPerformers, educationalFacts } from '@/lib/mockScheduleData';
 import ReadableFeaturedPanel from './components/ReadableFeaturedPanel';
 import ReadableLeagueCard from './components/ReadableLeagueCard';
 import ReadableGameAccordion from './components/ReadableGameAccordion';
@@ -42,6 +42,7 @@ export default function ScheduleHubHomepage() {
 
   const currentWeekData = mockScheduleWeeks.find(w => w.week === parseInt(selectedWeek));
   let currentGames = currentWeekData?.games || [];
+  const hasLiveGame = currentGames.some(g => g.status === 'Live');
 
   // Apply filters
   if (selectedTeam) {
@@ -201,23 +202,48 @@ export default function ScheduleHubHomepage() {
             <ReadableWeekRail games={currentGames} selectedWeek={selectedWeek} />
           </div>
 
-          {/* ROW 2: Standings (cols 1-4) + Leaders (cols 5-8) + LiveLike (cols 9-12) */}
-          <div className="col-span-12 md:col-span-4">
+          {/* ROW 2: Standings (cols 1-3) + Leaders (cols 4-6) + Did You Know (cols 7-9) + LiveLike (cols 10-12) */}
+          <div className="col-span-12 md:col-span-6 lg:col-span-3">
             <ReadableLeagueCard
               standings={mockStandings}
               type="standings"
             />
           </div>
 
-          <div className="col-span-12 md:col-span-4">
+          <div className="col-span-12 md:col-span-6 lg:col-span-3">
             <ReadableLeagueCard
               topPerformers={mockTopPerformers}
               type="leaders"
             />
           </div>
 
-          <div className="col-span-12 md:col-span-4">
-            <ReadableLiveLikeCard />
+          <div className="col-span-12 md:col-span-6 lg:col-span-3">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+              className="bg-gradient-to-br from-[#4A9FD8]/10 to-blue-900/10 border border-[#4A9FD8]/20 rounded-xl p-4 h-full"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-2xl">💡</span>
+                <h4 className="text-base font-black text-white uppercase">Did You Know?</h4>
+              </div>
+              <div className="text-xs text-gray-400 mb-3">Fan education & 3ICE insights</div>
+              <div className="space-y-3">
+                {educationalFacts.slice(0, 2).map((fact, idx) => (
+                  <div key={idx} className="bg-black/40 rounded-lg p-3">
+                    <div className="flex items-start gap-2">
+                      <span className="text-[#4A9FD8] font-black text-sm mt-0.5">•</span>
+                      <p className="text-sm text-gray-300 leading-relaxed">{fact}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="col-span-12 md:col-span-6 lg:col-span-3">
+            <ReadableLiveLikeCard hasLiveGame={hasLiveGame} />
           </div>
 
           {/* ROW 3: Game Center (collapsed) */}
