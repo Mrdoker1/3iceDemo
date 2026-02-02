@@ -24,8 +24,8 @@ export default function ScheduleHubHomepage() {
     if (typeof window !== 'undefined') {
       const event = new CustomEvent('scheduleHeaderUpdate', {
         detail: {
-          title: 'SCHEDULE + MATCHUP INTELLIGENCE',
-          subtitle: 'ESPN-style schedule hub with betting odds, predictions & fan engagement',
+          title: 'SEASON SCHEDULE',
+          subtitle: 'Weekly game overview with quick stats & featured matchups',
           stats: null
         }
       });

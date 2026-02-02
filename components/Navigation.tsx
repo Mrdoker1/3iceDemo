@@ -12,22 +12,28 @@ import {
   IconCalendarEvent, 
   IconShoppingBag, 
   IconLogout, 
-  IconShoppingCart, 
+  IconShoppingCart,
+  IconSettings,
   IconX as TablerX
 } from '@tabler/icons-react';
 import EventHeader from './EventHeader';
 import { getAssetPath } from '@/lib/utils';
+import { useMenuSettings } from '@/contexts/MenuSettingsContext';
 
-const navItems = [
-  { name: 'Schedule', href: '/', icon: IconCalendarEvent },
-  { name: 'Watch', href: '/watch', icon: IconPlayerPlay },
-  { name: 'Ticketing', href: '/ticketing', icon: IconTicket },
-  { name: 'Shop', href: '/shop', icon: IconShoppingBag },
+const allNavItems = [
+  { name: 'Schedule', href: '/', icon: IconCalendarEvent, settingKey: 'schedule' as const },
+  { name: 'Watch', href: '/watch', icon: IconPlayerPlay, settingKey: 'watch' as const },
+  { name: 'Ticketing', href: '/ticketing', icon: IconTicket, settingKey: 'ticketing' as const },
+  { name: 'Shop', href: '/shop', icon: IconShoppingBag, settingKey: 'shop' as const },
 ];
 
 export default function Navigation() {
   const pathname = usePathname();
+  const { settings } = useMenuSettings();
   const [eventTitle, setEventTitle] = React.useState('3ICE Arena Selection');
+
+  // Filter nav items based on settings
+  const visibleNavItems = allNavItems.filter(item => settings[item.settingKey]);
   const [showBackButton, setShowBackButton] = React.useState(false);
   const [onBackHandler, setOnBackHandler] = React.useState<(() => void) | null>(null);
   const [scheduleHeader, setScheduleHeader] = React.useState<{
@@ -147,8 +153,8 @@ export default function Navigation() {
         </div>
 
         {/* Navigation Items */}
-        <div className="flex-1 py-6">
-          {navItems.map((item) => {
+        <div className="flex-1 py-6 overflow-y-auto">
+          {visibleNavItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
             
@@ -198,8 +204,6 @@ export default function Navigation() {
           })}
         </div>
 
-        {/* Bottom branding - removed as logo is at top */}
-        <div className="h-4"></div>
       </div>
 
       {/* Top Header */}
@@ -224,7 +228,7 @@ export default function Navigation() {
               />
             )}
             
-            {/* Schedule/Shop/Watch/Matchup Header */}
+            {/* Schedule/Shop/Watch/Matchup/Settings Header */}
             {scheduleHeader && (
               <div className="flex items-center gap-6 border-l border-gray-700 pl-4 ml-4">
                 <div>
@@ -246,6 +250,10 @@ export default function Navigation() {
                       <>
                         <span className="text-white">OFFICIAL </span>
                         <span className="text-[#4A9FD8]">SHOP</span>
+                      </>
+                    ) : scheduleHeader.title.includes('SETTINGS') ? (
+                      <>
+                        <span className="text-[#4A9FD8]">SETTINGS</span>
                       </>
                     ) : (
                       <>
@@ -309,6 +317,16 @@ export default function Navigation() {
                 )}
               </AnimatePresence>
             </motion.button>
+
+            <Link
+              href="/settings"
+              className="flex items-center gap-2 px-2 py-2 hover:opacity-80 transition-all group"
+            >
+              <span className="text-sm font-medium text-gray-400 group-hover:text-[#4A9FD8] transition-colors">
+                Settings
+              </span>
+              <IconSettings size={18} className="text-gray-400 group-hover:text-[#4A9FD8] transition-colors" stroke={1.5} />
+            </Link>
             
             <button
               onClick={() => console.log('Logout')}
